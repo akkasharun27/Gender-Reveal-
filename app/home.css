@@ -25,17 +25,31 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 var(--margin-desktop);
+  padding: 0 24px;
   height: 80px;
   max-width: var(--container-max);
   margin: 0 auto;
+  position: relative;
 }
 
 .home-header-title {
-  font-size: x-large;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: var(--color-primary);
   letter-spacing: -0.5px;
+}
+
+.home-mobile-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(var(--color-outline-variant), 0.35);
+  background: rgba(var(--color-surface), 0.95);
+  color: var(--color-on-surface);
+  cursor: pointer;
 }
 
 .home-header-nav {
@@ -44,8 +58,36 @@
   gap: 32px;
 }
 
+.home-header-nav.open {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 88px;
+  right: 24px;
+  left: 24px;
+  padding: 20px;
+  background: antiqueWhite;
+  opacity: 0.95;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  z-index: 60;
+}
+
 @media (min-width: 768px) {
+  .home-mobile-toggle {
+    display: none;
+  }
+
   .home-header-nav {
+    display: flex;
+    position: static;
+    flex-direction: row;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .home-header-nav.open {
     display: flex;
   }
 }
@@ -99,7 +141,7 @@
 /* Hero Section */
 .home-hero {
   position: relative;
-  height: 870px;
+  min-height: 820px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,12 +249,53 @@
   display: flex;
   justify-content: center;
   gap: 16px;
-  padding: 48px 0;
+  padding: 40px 0 32px;
 }
 
 @media (min-width: 768px) {
   .home-hero-countdown {
     gap: 48px;
+  }
+}
+
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(80px, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 720px;
+}
+
+.countdown-card {
+  padding: 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  backdrop-filter: blur(14px);
+}
+
+.countdown-value {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.countdown-label {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--color-on-surface), 0.75);
+}
+
+@media (max-width: 767px) {
+  .countdown-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .countdown-card {
+    padding: 18px;
   }
 }
 
@@ -339,11 +422,17 @@
   background-color: white;
   aspect-ratio: 4 / 5;
   border: 1px solid var(--color-outline-variant);
-  padding: 32px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   transition: transform 0.5s ease;
+}
+
+@media (max-width: 767px) {
+  .home-vote-card {
+    padding: 22px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -576,7 +665,7 @@
 }
 
 .home-journey-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 16px;
   padding: 16px 32px;
@@ -594,6 +683,13 @@
   background-color: var(--color-primary);
   color: var(--color-on-primary);
   border-color: var(--color-primary);
+}
+
+@media (max-width: 767px) {
+  .home-journey-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .home-journey-grid {
@@ -617,6 +713,12 @@
 
 .home-journey-image:nth-child(2) {
   transform: translateY(48px);
+}
+
+@media (max-width: 767px) {
+  .home-journey-image:nth-child(2) {
+    transform: translateY(0);
+  }
 }
 
 .home-journey-image img {
@@ -791,6 +893,48 @@
   }
   50% {
     opacity: 0.3;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-header-content {
+    padding: 0 16px;
+    height: 72px;
+  }
+
+  .home-hero {
+    min-height: 740px;
+    padding-bottom: 56px;
+  }
+
+  .home-hero-title {
+    font-size: 2.5rem;
+    line-height: 1.05;
+  }
+
+  .home-hero-subtitle {
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
+
+  .home-hero-scroll {
+    bottom: 18px;
+  }
+
+  .home-vote-center {
+    padding: 24px;
+  }
+
+  .home-vote-grid {
+    gap: 20px;
+  }
+
+  .home-journey-container {
+    padding: 0 16px;
+  }
+
+  .home-newsletter {
+    padding: 72px 16px;
   }
 }
 

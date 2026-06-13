@@ -1,18 +1,36 @@
+"use client";
+import React, { useState } from "react";
 import Countdown from "./components/Countdown";
-import { FiChevronDown, FiHeart, FiArrowRight, FiBook } from "react-icons/fi";
+import { FiChevronDown, FiHeart, FiArrowRight, FiBook, FiMenu, FiX } from "react-icons/fi";
 import { AiFillHeart } from "react-icons/ai";
 import "./home.css";
 
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div className="home-container">
       <header className="home-header">
         <div className="home-header-content">
           <div className="home-header-title">𝒱𝒾𝒿𝒶𝓎 ♥ 𝒞𝓎𝓃𝓉𝒽𝒾𝒶</div>
-          <nav className="home-header-nav">
-            <a className="home-nav-link active" href="#">Home</a>
-            <a className="home-nav-link" href="#our-journey">Our Story</a>
-            <a className="home-nav-link" href="#vote">Vote Now</a>
+          <button
+            className="home-mobile-toggle"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((state) => !state)}
+          >
+            {menuOpen ? <FiX /> : <FiMenu />}
+          </button>
+          <nav className={`home-header-nav ${menuOpen ? "open" : ""}`}>
+            <a className="home-nav-link active" href="#">
+              Home
+            </a>
+            <a className="home-nav-link" href="#our-journey">
+              Our Story
+            </a>
+            <a className="home-nav-link" href="#vote">
+              Vote Now
+            </a>
             <button className="home-signin-btn">Sign In</button>
           </nav>
         </div>
@@ -69,7 +87,7 @@ export default function Home() {
               </div>
               <div className="home-vote-card-content boy">
                 <h3 className="home-vote-card-title" style={{ color: 'var(--color-tertiary)' }}>A Brave Little Prince</h3>
-                <p className="home-vote-card-text">"Be strong and courageous... for the Lord your God will be with you."</p>
+                <p className="home-vote-card-text">&quot;Be strong and courageous... for the Lord your God will be with you.&quot;</p>
                 <button className="home-vote-card-btn">
                   Vote Boy
                 </button>
@@ -97,7 +115,7 @@ export default function Home() {
               </div>
               <div className="home-vote-card-content girl">
                 <h3 className="home-vote-card-title" style={{ color: '#ad1457' }}>A Radiant Little Princess</h3>
-                <p className="home-vote-card-text">"She is clothed in strength and dignity, and she laughs without fear of the future."</p>
+                <p className="home-vote-card-text">&quot;She is clothed in strength and dignity, and she laughs without fear of the future.&quot;</p>
                 <button className="home-vote-card-btn" style={{ 
                   backgroundColor: 'rgba(173, 20, 87, 0.1)',
                   color: '#ad1457',

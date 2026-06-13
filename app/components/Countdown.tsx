@@ -41,22 +41,22 @@ export default function Countdown({ targetIso }: { targetIso: string }) {
   }, [targetIso]);
 
   return (
-    <div className="mt-12 flex items-center justify-center gap-12 text-gold">
-      <div className="text-center">
-        <div className="text-4xl font-medium">{timeLeft.days}</div>
-        <div className="text-sm text-gray-500">DAYS</div>
+    <div className="countdown-grid">
+      <div className="countdown-card">
+        <div className="countdown-value">{timeLeft.days}</div>
+        <div className="countdown-label">DAYS</div>
       </div>
-      <div className="text-center">
-        <div className="text-4xl font-medium">{String(timeLeft.hours).padStart(2, "0")}</div>
-        <div className="text-sm text-gray-500">HOURS</div>
+      <div className="countdown-card">
+        <div className="countdown-value">{String(timeLeft.hours).padStart(2, "0")}</div>
+        <div className="countdown-label">HOURS</div>
       </div>
-      <div className="text-center">
-        <div className="text-4xl font-medium">{String(timeLeft.minutes).padStart(2, "0")}</div>
-        <div className="text-sm text-gray-500">MINS</div>
+      <div className="countdown-card">
+        <div className="countdown-value">{String(timeLeft.minutes).padStart(2, "0")}</div>
+        <div className="countdown-label">MINS</div>
       </div>
-      <div className="text-center hidden md:block">
-        <div className="text-4xl font-medium">{String(timeLeft.seconds).padStart(2, "0")}</div>
-        <div className="text-sm text-gray-500">SECS</div>
+      <div className="countdown-card countdown-card-seconds">
+        <div className="countdown-value">{String(timeLeft.seconds).padStart(2, "0")}</div>
+        <div className="countdown-label">SECS</div>
       </div>
     </div>
   );
