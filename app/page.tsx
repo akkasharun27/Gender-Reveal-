@@ -1,65 +1,160 @@
-import Image from "next/image";
+import Countdown from "./components/Countdown";
+import { FiChevronDown, FiHeart, FiArrowRight, FiBook } from "react-icons/fi";
+import { AiFillHeart } from "react-icons/ai";
+import "./home.css";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="home-container">
+      <header className="home-header">
+        <div className="home-header-content">
+          <div className="home-header-title">𝒱𝒾𝒿𝒶𝓎 ♥ 𝒞𝓎𝓃𝓉𝒽𝒾𝒶</div>
+          <nav className="home-header-nav">
+            <a className="home-nav-link active" href="#">Home</a>
+            <a className="home-nav-link" href="#our-journey">Our Story</a>
+            <a className="home-nav-link" href="#vote">Vote Now</a>
+            <button className="home-signin-btn">Sign In</button>
+          </nav>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      <main className="home-main">
+        <section className="home-hero" id="hero">
+          <div className="home-hero-bg">
+            <div className="home-hero-image"></div>
+            <div className="home-hero-overlay"></div>
+            <div className="home-hero-glow-1"></div>
+            <div className="home-hero-glow-2"></div>
+          </div>
+
+          <div className="home-hero-content">
+            <div className="home-hero-intro">
+              <span className="home-hero-label">Heaven Sent</span>
+              <h1 className="home-hero-title">A Gift from Above</h1>
+              <p className="home-hero-subtitle">
+                Blessed and chosen, we wait to see who God has sent to us.
+              </p>
+            </div>
+
+            <div className="home-hero-countdown">
+              <Countdown targetIso="2026-06-23T16:00:00" />
+            </div>
+
+            <div className="home-hero-cta">
+              <a href="#vote" className="home-hero-btn">Guess the Gift</a>
+              <a className="home-hero-link" href="#our-journey">
+                <span>Our Journey</span>
+                <FiArrowRight />
+              </a>
+            </div>
+          </div>
+
+          <div className="home-hero-scroll">
+            <FiChevronDown />
+          </div>
+        </section>
+
+        <div className="home-divider">
+          <div className="divider-diamond">
+            <div className="diamond-icon"></div>
+          </div>
         </div>
+
+        <section className="home-vote" id="vote">
+          <div className="home-vote-grid">
+            <div className="home-vote-card">
+              <div className="home-vote-card-overlay"></div>
+              <div className="home-vote-card-image">
+                <img alt="Blue baby accessories" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQl4T85w6skgNiWdES5o-wxCvWv4VTHhM2RV2WYtgjdW523IHoeV6cRdcWoaaTabZ0WshkG_-OSLZcbnC_xb4CSGYZToSkF50KyVDXWbmFhPiSVHEovtMnVxNuWW3j9UDIKnMpMjFx_U5845NZ5_7tFGosBRWAoxFNlmbvYtqxaz_ihXD_0ddGg3e1NeG8r8YiaOGUtZP0ASAXBjFoGRwh3RSCbLzYSaZaGB8SObQdR4OhpZ5ukuHPtFK8nIgMqpjaJH6ZkMp4Dnk" />
+              </div>
+              <div className="home-vote-card-content boy">
+                <h3 className="home-vote-card-title" style={{ color: 'var(--color-tertiary)' }}>A Brave Little Prince</h3>
+                <p className="home-vote-card-text">"Be strong and courageous... for the Lord your God will be with you."</p>
+                <button className="home-vote-card-btn">
+                  Vote Boy
+                </button>
+              </div>
+            </div>
+
+            <div className="home-vote-center">
+              <div className="home-vote-icon">
+                <FiHeart />
+              </div>
+              <h2 className="home-vote-center-title">Join the Celebration</h2>
+              <p className="home-vote-center-text">
+                Every child is a heritage from the Lord. Cast your prayerful vote on who you believe our little one will be.
+              </p>
+              <div className="home-vote-stats">
+                <div className="home-vote-stats-label">Total Prayers Cast</div>
+                <div className="home-vote-stats-number">1</div>
+              </div>
+            </div>
+
+            <div className="home-vote-card home-vote-princess">
+              <div className="home-vote-card-overlay"></div>
+              <div className="home-vote-card-image">
+                <img alt="Pink baby floral detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiRTmRaskF22cq766QTuisVS-3bcU8_4IuV1KSjE42nZjxmMQkw9k9-HLMLWEye53m9b0pe2Aawz-2Xe__F2uu98PK4ZmC_xtNURJAMvua72RUDKeXj1bil3dGbXYmaYXPakHiMPDj19Lvg_dq9sQhLsacGi8UiTrQz2qxlsG8ovzSiQITGEj20kyePaYisEq-vs4aIKJOXd1ItIbCQ_tlccwYPzrwph7iAdfm-yWqsnqooLE6ckNTA8xUU5ZHh53Z56iJzAJsTsg" />
+              </div>
+              <div className="home-vote-card-content girl">
+                <h3 className="home-vote-card-title" style={{ color: '#ad1457' }}>A Radiant Little Princess</h3>
+                <p className="home-vote-card-text">"She is clothed in strength and dignity, and she laughs without fear of the future."</p>
+                <button className="home-vote-card-btn" style={{ 
+                  backgroundColor: 'rgba(173, 20, 87, 0.1)',
+                  color: '#ad1457',
+                  borderColor: 'rgba(173, 20, 87, 0.3)'
+                }}>
+                  Vote Girl
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="home-journey" id="our-journey">
+          <div className="home-journey-container">
+            <div className="home-journey-header">
+              <div className="home-journey-intro">
+                <span className="home-journey-label">The Beginning</span>
+                <h2 className="home-journey-title">The Gift of Expectation</h2>
+                <p className="home-journey-text">
+                  Our journey toward parenthood has been paved with faith. Each step of the way, we have felt the divine hand of God guiding us toward this beautiful moment.
+                </p>
+              </div>
+              <button className="home-journey-btn">
+                View Full Story
+              </button>
+            </div>
+            <div className="home-journey-grid">
+              <div className="home-journey-image">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkeVvEZBYeFfj54jdN0XIH59es9E8zhVOzcKCJJX_F_8E41JYOthKIk3aqPouJ7OaPD_dJ0P8JbkKmiCtP0B78vQtdSaZzWMo8t9nebzHvpQbRw_8ZosBYaQ-tf49NlvnQQYv1xPMKWniMjUOgc5lZuIvq1ypBfT5D5W40SjxFe8OmkpP3TSAI26UuUQYFZIVhkZuMYqxQW0nhACx9o6CYBErcW_A5adwZ6qLQAHqL274xEGYguTxR30qD8_su5q5bxYWC7Rnm7p4" alt="Pregnant woman cradling belly" />
+                <div className="home-journey-image-overlay">
+                  <AiFillHeart />
+                </div>
+              </div>
+              <div className="home-journey-image">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZGCGQRX6RsYNfw-IQ-pzTEbjy6QgZO_7mvdT-ArgsM687QXLuSdfACy8qV6-HALgVJylA8Ac-v4kZiQtwXpb5oxps1NnKwdQzhNLsenGTMEypLSV10QTr0jQMlhAWdX0R5KheSKxVVT7HJ8HZKNPaQnesoLiGzMgmfMEqqiXIeMjyRKm3fZdmIIWqwQyqm5ESDLlwmSFgwT0xlZaLwai0RM5Tw7baQbpeijQJluBLlYv5pL85cuAE9gi8qt3SnghFf_qgLkYYqSI" alt="Couple praying at sunset" />
+                <div className="home-journey-image-overlay">
+                  <AiFillHeart />
+                </div>
+              </div>
+              <div className="home-journey-image">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTTdJnUvoN6sp-c-OGKVhutXTvphK-w0XOkOjZfC03P4wKgtsXbfG4FmnLLmfSKUO3O2viC5ssnUSIH-MDHpq46zEUVvdxlQ5KiY6h2JztQTYf9a2BAJW2IM40ckCzUgAqAo_ga03sI2OyJN_CjAZ_F_nu1BvnHxNr3w7KiQ-jLuFulNICgM215tA4iTGAvE-mxDwbZ9CALofnxtTznMfvph32-oKO-Uc3AU2z5cStp5XoNe1_Wf-wpOieyiWvHvEKhGn-AGgiYwg" alt="Open Bible with olive branch" />
+                <div className="home-journey-image-overlay">
+                  <FiBook />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
+
+      <footer className="home-footer">
+        <div className="home-footer-content">
+          <div className="home-footer-title">𝒱𝒾𝒿𝒶𝓎 ♥ 𝒞𝓎𝓃𝓉𝒽𝒾𝒶</div>
+          <p className="home-footer-copyright">© 2026. Blessed be His name.</p>
+        </div>
+      </footer>
     </div>
   );
 }
