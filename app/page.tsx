@@ -1,12 +1,32 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Countdown from "./components/Countdown";
+import VoteModal from "./components/VoteModal";
 import { FiChevronDown, FiHeart, FiArrowRight, FiBook, FiMenu, FiX } from "react-icons/fi";
 import { AiFillHeart } from "react-icons/ai";
 import "./home.css";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [voteOpen, setVoteOpen] = useState(false);
+  const [voteGender, setVoteGender] = useState<"boy" | "girl">("boy");
+  const [totalWishes, setTotalWishes] = useState(1);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/wishes');
+        const json = await res.json();
+        if (res.ok && typeof json.total === 'number') {
+          if (mounted) setTotalWishes(json.total);
+        }
+      } catch (e) {
+        console.error('Failed to fetch total wishes', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <div className="home-container">
@@ -88,7 +108,7 @@ export default function Home() {
               <div className="home-vote-card-content boy">
                 <h3 className="home-vote-card-title" style={{ color: 'var(--color-tertiary)' }}>A Brave Little Prince</h3>
                 <p className="home-vote-card-text">&quot;Be strong and courageous... for the Lord your God will be with you.&quot;</p>
-                <button className="home-vote-card-btn">
+                <button className="home-vote-card-btn" onClick={() => { setVoteGender("boy"); setVoteOpen(true); }}>
                   Vote Boy
                 </button>
               </div>
@@ -103,8 +123,8 @@ export default function Home() {
                 Every child is a heritage from the Lord. Cast your prayerful vote on who you believe our little one will be.
               </p>
               <div className="home-vote-stats">
-                <div className="home-vote-stats-label">Total Prayers Cast</div>
-                <div className="home-vote-stats-number">1</div>
+                <div className="home-vote-stats-label">Total Wishes Cast</div>
+                <div className="home-vote-stats-number">{totalWishes}</div>
               </div>
             </div>
 
@@ -120,13 +140,49 @@ export default function Home() {
                   backgroundColor: 'rgba(173, 20, 87, 0.1)',
                   color: '#ad1457',
                   borderColor: 'rgba(173, 20, 87, 0.3)'
-                }}>
+                }} onClick={() => { setVoteGender("girl"); setVoteOpen(true); }}>
                   Vote Girl
                 </button>
               </div>
             </div>
           </div>
         </section>
+
+        <VoteModal
+          open={voteOpen}
+          defaultGender={voteGender}
+          onClose={() => setVoteOpen(false)}
+          onSubmit={async (payload) => {
+            try {
+              const res = await fetch('/api/wishes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+              });
+              const json = await res.json();
+              if (res.ok && json?.ok) {
+                // use server returned total when available
+                if (typeof json.total === 'number') setTotalWishes(json.total);
+                else setTotalWishes((n) => n + 1);
+                console.log('Saved', json);
+              } else {
+                // show validation errors if present
+                if (json?.errors) {
+                  const msgs = Object.values(json.errors).join('\n');
+                  alert(msgs || 'Failed to save prayer.');
+                } else if (json?.error) {
+                  alert(json.error);
+                } else {
+                  alert('Failed to save prayer.');
+                }
+                console.error('Save failed', json);
+              }
+            } catch (e) {
+              console.error(e);
+              alert('Failed to save prayer.');
+            }
+          }}
+        />
 
         <section className="home-journey" id="our-journey">
           <div className="home-journey-container">
