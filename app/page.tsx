@@ -2,15 +2,27 @@
 import React, { useState, useEffect } from "react";
 import Countdown from "./components/Countdown";
 import VoteModal from "./components/VoteModal";
+import SignInModal from "./components/SignInModal";
 import { FiChevronDown, FiHeart, FiArrowRight, FiBook, FiMenu, FiX } from "react-icons/fi";
 import { AiFillHeart } from "react-icons/ai";
 import "./home.css";
 
+type RevealState = {
+  dadRevealed: boolean;
+  momRevealed: boolean;
+};
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [voteOpen, setVoteOpen] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+  const [signedInName, setSignedInName] = useState("");
+  const [signInError, setSignInError] = useState("");
   const [voteGender, setVoteGender] = useState<"boy" | "girl">("boy");
   const [totalWishes, setTotalWishes] = useState(1);
+  const [revealState, setRevealState] = useState<RevealState>({ dadRevealed: false, momRevealed: false });
+  const [revealLoading, setRevealLoading] = useState<'dad' | 'mom' | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -27,6 +39,107 @@ export default function Home() {
     })();
     return () => { mounted = false; };
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/auth');
+        const json = await res.json();
+        if (mounted && res.ok && json?.ok) {
+          setSignedIn(Boolean(json.signedIn));
+          setSignedInName(typeof json.name === 'string' ? json.name : '');
+        }
+      } catch (e) {
+        console.error('Failed to fetch auth status', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/reveal');
+        const json = await res.json();
+        if (mounted && res.ok && json?.ok) {
+          setRevealState({
+            dadRevealed: Boolean(json.dadRevealed),
+            momRevealed: Boolean(json.momRevealed),
+          });
+        }
+      } catch (e) {
+        console.error('Failed to fetch reveal state', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const handleSignIn = async (payload: { name: string; password: string }) => {
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (res.ok && json?.ok) {
+        setSignedIn(true);
+        setSignedInName(payload.name);
+        setSignInError("");
+        setSignInOpen(false);
+      } else {
+        setSignInError(json?.error || 'Sign-in failed');
+      }
+    } catch (e) {
+      console.error('Sign in error', e);
+      setSignInError('Sign-in failed');
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await fetch('/api/auth', { method: 'DELETE' });
+    } catch (e) {
+      console.error('Sign out error', e);
+    } finally {
+      setSignedIn(false);
+      setSignedInName("");
+    }
+  };
+
+  const handleReveal = async (who: 'dad' | 'mom') => {
+    const already = who === 'dad' ? revealState.dadRevealed : revealState.momRevealed;
+    if (revealLoading || already || !signedIn) return;
+    setRevealLoading(who);
+
+    try {
+      const res = await fetch('/api/reveal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ who }),
+      });
+      const json = await res.json();
+
+      if (res.ok && json?.ok) {
+        setRevealState({
+          dadRevealed: Boolean(json.dadRevealed),
+          momRevealed: Boolean(json.momRevealed),
+        });
+      } else {
+        if (res.status === 401) {
+          setSignedIn(false);
+          setSignedInName("");
+        }
+        console.error('Reveal update failed', json);
+      }
+    } catch (e) {
+      console.error('Reveal request failed', e);
+    } finally {
+      setRevealLoading(null);
+    }
+  };
 
   return (
     <div className="home-container">
@@ -51,7 +164,15 @@ export default function Home() {
             <a className="home-nav-link" href="#vote">
               Vote Now
             </a>
-            <button className="home-signin-btn">Sign In</button>
+            {signedIn ? (
+              <button className="home-signin-btn" onClick={handleSignOut}>
+                Sign Out
+              </button>
+            ) : (
+              <button className="home-signin-btn" onClick={() => setSignInOpen(true)}>
+                Sign In
+              </button>
+            )}
           </nav>
         </div>
       </header>
@@ -75,7 +196,12 @@ export default function Home() {
             </div>
 
             <div className="home-hero-countdown">
-              <Countdown targetIso="2026-06-23T16:00:00" />
+              <Countdown
+                targetIso="2026-06-13T17:16:00"
+                revealState={revealState}
+                signedIn={signedIn}
+                onReveal={handleReveal}
+              />
             </div>
 
             <div className="home-hero-cta">
@@ -221,6 +347,12 @@ export default function Home() {
           </div>
         </section>
 
+        <SignInModal
+          open={signInOpen}
+          onClose={() => setSignInOpen(false)}
+          onSubmit={handleSignIn}
+          error={signInError}
+        />
       </main>
 
       <footer className="home-footer">

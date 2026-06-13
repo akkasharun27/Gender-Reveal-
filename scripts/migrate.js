@@ -36,13 +36,20 @@ async function run() {
     process.exit(1);
   }
 
-  const sqlPath = path.join(process.cwd(), 'migrations', '001_create_prayers.sql');
-  if (!fs.existsSync(sqlPath)) {
-    console.error('Migration file not found:', sqlPath);
+  const migrationsDir = path.join(process.cwd(), 'migrations');
+  if (!fs.existsSync(migrationsDir)) {
+    console.error('Migrations directory not found:', migrationsDir);
     process.exit(1);
   }
 
-  const sql = fs.readFileSync(sqlPath, 'utf8');
+  const migrationFiles = fs.readdirSync(migrationsDir)
+    .filter((file) => file.endsWith('.sql'))
+    .sort();
+
+  if (migrationFiles.length === 0) {
+    console.error('No migration files found in:', migrationsDir);
+    process.exit(1);
+  }
 
   let client = null;
   // try neon exports variations
@@ -73,8 +80,13 @@ async function run() {
 
   try {
     if (typeof client.connect === 'function') await client.connect();
-    await client.query(sql);
-    console.log('Migration applied successfully');
+    for (const file of migrationFiles) {
+      const sqlPath = path.join(migrationsDir, file);
+      const sql = fs.readFileSync(sqlPath, 'utf8');
+      console.log('Applying migration:', file);
+      await client.query(sql);
+    }
+    console.log('Migrations applied successfully');
   } catch (err) {
     console.error('Migration failed:', err);
     process.exit(1);
