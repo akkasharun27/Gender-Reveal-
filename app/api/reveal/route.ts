@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function getClient() {
@@ -62,14 +63,28 @@ export async function POST(req: Request) {
   }
 
   try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('session_token')?.value;
+
+    if (!sessionToken) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
     const clientObj = await getClient();
     const client = clientObj as any;
     if (typeof client.connect === 'function') await client.connect();
 
-    const authResult = await client.query('SELECT id FROM users WHERE signed_in = true LIMIT 1');
+    // Verify session is valid
+    const authResult = await client.query(
+      `SELECT u.id FROM users u
+       INNER JOIN sessions s ON u.id = s.user_id
+       WHERE s.token = $1 AND s.expires_at > now()`,
+      [sessionToken]
+    );
+
     if (!authResult?.rows?.length) {
       if (typeof client.end === 'function') await client.end();
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      return NextResponse.json({ error: 'Session expired or invalid' }, { status: 401 });
     }
 
     await client.query(`
@@ -94,3 +109,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'DB error' }, { status: 500 });
   }
 }
+

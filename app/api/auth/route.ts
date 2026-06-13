@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function getClient() {
@@ -22,13 +23,29 @@ async function getClient() {
   }
 }
 
+function generateToken(): string {
+  return Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+}
+
 export async function GET() {
   try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('session_token')?.value;
+
+    if (!sessionToken) {
+      return NextResponse.json({ ok: true, signedIn: false });
+    }
+
     const clientObj = await getClient();
     const client = clientObj as any;
     if (typeof client.connect === 'function') await client.connect();
 
-    const res = await client.query('SELECT id, name FROM users WHERE signed_in = true LIMIT 1');
+    const res = await client.query(
+      `SELECT u.id, u.name FROM users u
+       INNER JOIN sessions s ON u.id = s.user_id
+       WHERE s.token = $1 AND s.expires_at > now()`,
+      [sessionToken]
+    );
     const row = res?.rows?.[0] ?? null;
 
     if (typeof client.end === 'function') await client.end();
@@ -55,17 +72,35 @@ export async function POST(req: Request) {
     const client = clientObj as any;
     if (typeof client.connect === 'function') await client.connect();
 
+    // Verify credentials
     const result = await client.query('SELECT id FROM users WHERE name = $1 AND password = $2 LIMIT 1', [name, password]);
     if (result?.rows?.length === 0) {
       if (typeof client.end === 'function') await client.end();
       return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
-    await client.query('UPDATE users SET signed_in = false');
-    await client.query('UPDATE users SET signed_in = true WHERE id = $1', [result.rows[0].id]);
+    const userId = result.rows[0].id;
+    const token = generateToken();
+
+    // Create session
+    await client.query(
+      'INSERT INTO sessions (user_id, token, expires_at) VALUES ($1, $2, now() + interval \'30 days\')',
+      [userId, token]
+    );
 
     if (typeof client.end === 'function') await client.end();
-    return NextResponse.json({ ok: true, signedIn: true, name });
+
+    const response = NextResponse.json({ ok: true, signedIn: true, name });
+    const cookieStore = await cookies();
+    cookieStore.set('session_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
+      path: '/',
+    });
+
+    return response;
   } catch (err) {
     console.error('Sign in error', err);
     return NextResponse.json({ ok: false, error: 'DB error' }, { status: 500 });
@@ -74,15 +109,29 @@ export async function POST(req: Request) {
 
 export async function DELETE() {
   try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('session_token')?.value;
+
+    if (!sessionToken) {
+      return NextResponse.json({ ok: true });
+    }
+
     const clientObj = await getClient();
     const client = clientObj as any;
     if (typeof client.connect === 'function') await client.connect();
 
-    await client.query('UPDATE users SET signed_in = false');
+    // Delete session
+    await client.query('DELETE FROM sessions WHERE token = $1', [sessionToken]);
     if (typeof client.end === 'function') await client.end();
-    return NextResponse.json({ ok: true });
+
+    const response = NextResponse.json({ ok: true });
+    const store = await cookies();
+    store.delete('session_token');
+
+    return response;
   } catch (err) {
     console.error('Sign out error', err);
     return NextResponse.json({ ok: false, error: 'DB error' }, { status: 500 });
   }
 }
+
