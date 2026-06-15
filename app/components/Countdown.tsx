@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { pickRevealMedia } from "../constants/reveal";
 
 type TimeLeft = {
   days: number;
@@ -17,6 +18,8 @@ type CountdownProps = {
   targetIso: string;
   revealState?: RevealState;
   signedIn?: boolean;
+  userRole?: 'dad' | 'mom' | 'guest';
+  revealGender?: 'boy' | 'girl';
   onReveal?: (who: 'dad' | 'mom') => Promise<void>;
 };
 
@@ -24,6 +27,8 @@ export default function Countdown({
   targetIso,
   revealState = { dadRevealed: false, momRevealed: false },
   signedIn = true,
+  userRole = 'guest',
+  revealGender,
   onReveal,
 }: CountdownProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
@@ -34,6 +39,55 @@ export default function Countdown({
   });
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState<'dad' | 'mom' | null>(null);
+  const role = userRole ?? 'guest';
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  const playFinalVideo = async () => {
+    // Show the video element first (no preview before user clicks)
+    setIsPlaying(true);
+
+    // Defer actual play & fullscreen until the element is mounted
+    requestAnimationFrame(async () => {
+      const overlay = overlayRef.current;
+      const v = videoRef.current;
+      if (!v) return;
+      try {
+        if (overlay && typeof overlay.requestFullscreen === 'function') {
+          // request fullscreen on the overlay so we can control layout
+          // @ts-ignore
+          await overlay.requestFullscreen();
+          // try to lock orientation to portrait when supported
+          try {
+            // @ts-ignore
+            if (screen && screen.orientation && typeof screen.orientation.lock === 'function') {
+              // attempt to lock to portrait; browsers may deny this
+              // @ts-ignore
+              await screen.orientation.lock('portrait');
+            }
+          } catch (e) {
+            // ignore orientation lock failures
+          }
+        } else if (typeof v.requestFullscreen === 'function') {
+          // fallback: request fullscreen on the video
+          // @ts-ignore
+          await v.requestFullscreen();
+        } else if (typeof (v as any).webkitEnterFullscreen === 'function') {
+          try { (v as any).webkitEnterFullscreen(); } catch {}
+        }
+      } catch (e) {
+        // ignore fullscreen errors
+      }
+
+      try {
+        await v.play();
+      } catch (err) {
+        // ignore play errors
+      }
+    });
+  };
 
   useEffect(() => {
     const target = new Date(targetIso);
@@ -69,7 +123,8 @@ export default function Countdown({
 
   const handleReveal = async (who: 'dad' | 'mom') => {
     const already = who === 'dad' ? revealState.dadRevealed : revealState.momRevealed;
-    if (!onReveal || loading || already || !signedIn) return;
+    const roleMismatch = (who === 'dad' && role !== 'dad') || (who === 'mom' && role !== 'mom');
+    if (!onReveal || loading || already || !signedIn || roleMismatch) return;
     setLoading(who);
     try {
       await onReveal(who);
@@ -80,9 +135,37 @@ export default function Countdown({
 
   if (done && revealState.dadRevealed && revealState.momRevealed) {
     return (
-      <div className="countdown-final-overlay">
+      <div
+        ref={overlayRef}
+        className="countdown-final-overlay"
+        role="button"
+        tabIndex={0}
+        onClick={playFinalVideo}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') playFinalVideo(); }}
+        aria-label="Play reveal video"
+      >
+          {isPlaying ? (
+                <video
+                  ref={videoRef}
+                  src={pickRevealMedia(revealGender ?? 'girl')}
+                  className="countdown-final-video"
+                  preload="metadata"
+                  playsInline
+                  controls
+                  muted={false}
+                  style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 'auto', height: '100%', objectFit: 'contain' }}
+                />
+          ) : null}
         <div className="countdown-final-content">
-          <div className="countdown-final-text">IT&apos;S A GIRL</div>
+          <button
+            className="countdown-play-button"
+            onClick={(e) => { e.stopPropagation(); playFinalVideo(); }}
+            aria-label="Play reveal"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+              <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
+            </svg>
+          </button>
         </div>
       </div>
     );
@@ -96,17 +179,25 @@ export default function Countdown({
             type="button"
             className={`countdown-reveal-button ${revealState.dadRevealed ? 'revealed' : ''}`}
             onClick={() => handleReveal('dad')}
-            disabled={revealState.dadRevealed || loading === 'dad' || !signedIn}
+            disabled={revealState.dadRevealed || loading === 'dad' || !signedIn || role !== 'dad'}
           >
-            {revealState.dadRevealed ? 'Dad Revealed' : 'Dad Happy To Reveal'}
+            {revealState.dadRevealed
+              ? 'Dad Revealed'
+              : signedIn && role !== 'dad'
+              ? 'Only Dad Can Reveal'
+              : 'Dad Happy To Reveal'}
           </button>
           <button
             type="button"
             className={`countdown-reveal-button ${revealState.momRevealed ? 'revealed' : ''}`}
             onClick={() => handleReveal('mom')}
-            disabled={revealState.momRevealed || loading === 'mom' || !signedIn}
+            disabled={revealState.momRevealed || loading === 'mom' || !signedIn || role !== 'mom'}
           >
-            {revealState.momRevealed ? 'Mom Revealed' : 'Mom Happy To Reveal'}
+            {revealState.momRevealed
+              ? 'Mom Revealed'
+              : signedIn && role !== 'mom'
+              ? 'Only Mom Can Reveal'
+              : 'Mom Happy To Reveal'}
           </button>
         </div>
         {!signedIn ? (

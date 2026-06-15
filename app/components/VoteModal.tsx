@@ -46,8 +46,10 @@ export default function VoteModal({ open, defaultGender, onClose, onSubmit }: Pr
         <button className="vote-modal-close" aria-label="Close" onClick={onClose}>
           ×
         </button>
-        <h3 className="vote-modal-title">Cast Your Prayer Vote</h3>
-
+        <h3 className="vote-modal-title">Peek-a-boo! Guess who I am? 🍼</h3>
+        <br />
+        <h2> can't wait to meet you! Will you guess if I'm a little prince or a radiant princess?</h2>
+        <br />
         <form className="vote-modal-form" onSubmit={handleSubmit}>
           <label className="vote-label">
             Your Name
@@ -60,7 +62,7 @@ export default function VoteModal({ open, defaultGender, onClose, onSubmit }: Pr
             />
           </label>
 
-          <div className="vote-label">Your Blessing For</div>
+          <div className="vote-label">Guess my gender</div>
           <div className="vote-radio-group">
             <label className="vote-radio">
               <input
@@ -85,7 +87,7 @@ export default function VoteModal({ open, defaultGender, onClose, onSubmit }: Pr
           </div>
 
           <label className="vote-label">
-            A Heartfelt Prayer
+            Want to leave a sweet note for me? 🧸
             <textarea
               className="vote-textarea"
               placeholder="Speak your blessings..."

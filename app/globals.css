@@ -9,7 +9,7 @@
   --font-manrope: var(--font-manrope);
 }
 
-@theme inline {
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 }

@@ -36,9 +36,19 @@ export async function GET() {
     const countRes = await client.query('SELECT COUNT(*)::int AS total FROM wishes');
     const total = countRes?.rows?.[0]?.total ?? 0;
 
+    // get counts by gender
+    const byGender = await client.query("SELECT gender, COUNT(*)::int AS cnt FROM wishes GROUP BY gender");
+    let boy = 0;
+    let girl = 0;
+    for (const r of (byGender?.rows ?? [])) {
+      if (r.gender === 'boy') boy = r.cnt ?? 0;
+      if (r.gender === 'girl') girl = r.cnt ?? 0;
+    }
+    const leadingGender = boy > girl ? 'boy' : 'girl';
+
     if (typeof client.end === 'function') await client.end();
 
-    return NextResponse.json({ ok: true, total });
+    return NextResponse.json({ ok: true, total, counts: { boy, girl }, leadingGender });
   } catch (err) {
     console.error('DB count error', err);
     return NextResponse.json({ error: 'DB error' }, { status: 500 });

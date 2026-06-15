@@ -33,18 +33,33 @@ export async function GET() {
     const client = clientObj as any;
     if (typeof client.connect === 'function') await client.connect();
 
-    await client.query(`
-      INSERT INTO reveal_state (dad_revealed, mom_revealed)
-      SELECT false, false
-      WHERE NOT EXISTS (SELECT 1 FROM reveal_state);
-    `);
+    // Ensure flags exist in the `constants` table. Use 'no' as default.
+    await client.query(
+      `INSERT INTO constants (name, value)
+         SELECT 'dad_revelead', 'no'
+         WHERE NOT EXISTS (SELECT 1 FROM constants WHERE name = 'dad_revelead');`
+    );
+    await client.query(
+      `INSERT INTO constants (name, value)
+         SELECT 'mom_revelead', 'no'
+         WHERE NOT EXISTS (SELECT 1 FROM constants WHERE name = 'mom_revelead');`
+    );
 
-    const result = await client.query('SELECT dad_revealed, mom_revealed FROM reveal_state LIMIT 1');
-    const row = result?.rows?.[0] ?? { dad_revealed: false, mom_revealed: false };
+    const result = await client.query(
+      `SELECT name, value FROM constants WHERE name IN ('dad_revelead','mom_revelead','gender')`
+    );
+    const rows = result?.rows ?? [];
+    const map: Record<string, string> = {};
+    for (const r of rows) map[r.name] = r.value;
+    const row = {
+      dad_revealed: map['dad_revelead'] === 'yes',
+      mom_revealed: map['mom_revelead'] === 'yes',
+      gender: map['gender'] === 'boy' || map['gender'] === 'girl' ? map['gender'] : null,
+    };
 
     if (typeof client.end === 'function') await client.end();
 
-    return NextResponse.json({ ok: true, dadRevealed: row.dad_revealed, momRevealed: row.mom_revealed });
+    return NextResponse.json({ ok: true, dadRevealed: row.dad_revealed, momRevealed: row.mom_revealed, gender: row.gender });
   } catch (err) {
     console.error('Reveal state load error', err);
     return NextResponse.json({ error: 'DB error' }, { status: 500 });
@@ -76,7 +91,7 @@ export async function POST(req: Request) {
 
     // Verify session is valid
     const authResult = await client.query(
-      `SELECT u.id FROM users u
+      `SELECT u.id, u.user_role FROM users u
        INNER JOIN sessions s ON u.id = s.user_id
        WHERE s.token = $1 AND s.expires_at > now()`,
       [sessionToken]
@@ -87,23 +102,44 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Session expired or invalid' }, { status: 401 });
     }
 
-    await client.query(`
-      INSERT INTO reveal_state (dad_revealed, mom_revealed)
-      SELECT false, false
-      WHERE NOT EXISTS (SELECT 1 FROM reveal_state);
-    `);
+    const userRole = authResult.rows[0].user_role ?? 'guest';
+    if ((who === 'dad' && userRole !== 'dad') || (who === 'mom' && userRole !== 'mom')) {
+      if (typeof client.end === 'function') await client.end();
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Ensure the flag rows exist
+    await client.query(
+      `INSERT INTO constants (name, value)
+         SELECT 'dad_revelead', 'no'
+         WHERE NOT EXISTS (SELECT 1 FROM constants WHERE name = 'dad_revelead');`
+    );
+    await client.query(
+      `INSERT INTO constants (name, value)
+         SELECT 'mom_revelead', 'no'
+         WHERE NOT EXISTS (SELECT 1 FROM constants WHERE name = 'mom_revelead');`
+    );
 
     const updateQuery =
       who === 'dad'
-        ? 'UPDATE reveal_state SET dad_revealed = true WHERE true RETURNING dad_revealed, mom_revealed'
-        : 'UPDATE reveal_state SET mom_revealed = true WHERE true RETURNING dad_revealed, mom_revealed';
+        ? "UPDATE constants SET value = 'yes' WHERE name = 'dad_revelead' RETURNING name, value"
+        : "UPDATE constants SET value = 'yes' WHERE name = 'mom_revelead' RETURNING name, value";
 
-    const result = await client.query(updateQuery);
-    const row = result?.rows?.[0] ?? { dad_revealed: who === 'dad', mom_revealed: who === 'mom' };
+    await client.query(updateQuery);
+
+    const result = await client.query(`SELECT name, value FROM constants WHERE name IN ('dad_revelead','mom_revelead','gender')`);
+    const rows = result?.rows ?? [];
+    const map: Record<string, string> = {};
+    for (const r of rows) map[r.name] = r.value;
+    const row = {
+      dad_revealed: map['dad_revelead'] === 'yes',
+      mom_revealed: map['mom_revelead'] === 'yes',
+      gender: map['gender'] === 'boy' || map['gender'] === 'girl' ? map['gender'] : null,
+    };
 
     if (typeof client.end === 'function') await client.end();
 
-    return NextResponse.json({ ok: true, dadRevealed: row.dad_revealed, momRevealed: row.mom_revealed });
+    return NextResponse.json({ ok: true, dadRevealed: row.dad_revealed, momRevealed: row.mom_revealed, gender: row.gender });
   } catch (err) {
     console.error('Reveal update error', err);
     return NextResponse.json({ error: 'DB error' }, { status: 500 });

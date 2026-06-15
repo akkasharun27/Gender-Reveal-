@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NEXT_USE_TURBOPACK=false next dev",
+    "dev": "NEXT_USE_TURBOPACK=false node server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "node server.js",
     "lint": "eslint",
     "migrate": "node scripts/migrate.js"
   },
@@ -19,7 +19,9 @@
     "pg": "^8.21.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-icons": "^5.6.0"
+    "react-icons": "^5.6.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

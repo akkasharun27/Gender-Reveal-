@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Countdown from "./components/Countdown";
 import VoteModal from "./components/VoteModal";
 import SignInModal from "./components/SignInModal";
+import { useRevealSync } from "./hooks/useRevealSync";
 import { FiChevronDown, FiHeart, FiArrowRight, FiBook, FiMenu, FiX } from "react-icons/fi";
 import { AiFillHeart } from "react-icons/ai";
 import "./home.css";
@@ -18,11 +19,31 @@ export default function Home() {
   const [signInOpen, setSignInOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [signedInName, setSignedInName] = useState("");
+  const [signedInRole, setSignedInRole] = useState<'dad' | 'mom' | 'guest'>('guest');
   const [signInError, setSignInError] = useState("");
   const [voteGender, setVoteGender] = useState<"boy" | "girl">("boy");
   const [totalWishes, setTotalWishes] = useState(1);
+  const [revealGender, setRevealGender] = useState<'boy' | 'girl' | null>(null);
   const [revealState, setRevealState] = useState<RevealState>({ dadRevealed: false, momRevealed: false });
   const [revealLoading, setRevealLoading] = useState<'dad' | 'mom' | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
+  const { emitRevealUpdate } = useRevealSync(() => {
+    // Callback when reveal is updated from another device
+    window.location.reload();
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuOpen && headerRef.current && !headerRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [menuOpen]);
+
 
   useEffect(() => {
     let mounted = true;
@@ -30,8 +51,11 @@ export default function Home() {
       try {
         const res = await fetch('/api/wishes');
         const json = await res.json();
-        if (res.ok && typeof json.total === 'number') {
-          if (mounted) setTotalWishes(json.total);
+        if (mounted && res.ok && json?.ok) {
+          if (typeof json.total === 'number') setTotalWishes(json.total);
+          if (json.leadingGender === 'boy' || json.leadingGender === 'girl') {
+            setRevealGender(json.leadingGender);
+          }
         }
       } catch (e) {
         console.error('Failed to fetch total wishes', e);
@@ -48,7 +72,6 @@ export default function Home() {
         const json = await res.json();
         if (mounted && res.ok && json?.ok) {
           setSignedIn(Boolean(json.signedIn));
-          setSignedInName(typeof json.name === 'string' ? json.name : '');
         }
       } catch (e) {
         console.error('Failed to fetch auth status', e);
@@ -68,6 +91,9 @@ export default function Home() {
             dadRevealed: Boolean(json.dadRevealed),
             momRevealed: Boolean(json.momRevealed),
           });
+          if (json.gender === 'boy' || json.gender === 'girl') {
+            setRevealGender(json.gender);
+          }
         }
       } catch (e) {
         console.error('Failed to fetch reveal state', e);
@@ -87,6 +113,7 @@ export default function Home() {
       if (res.ok && json?.ok) {
         setSignedIn(true);
         setSignedInName(payload.name);
+        setSignedInRole(json?.role === 'dad' || json?.role === 'mom' ? json.role : 'guest');
         setSignInError("");
         setSignInOpen(false);
       } else {
@@ -106,12 +133,13 @@ export default function Home() {
     } finally {
       setSignedIn(false);
       setSignedInName("");
+      setSignedInRole('guest');
     }
   };
 
   const handleReveal = async (who: 'dad' | 'mom') => {
     const already = who === 'dad' ? revealState.dadRevealed : revealState.momRevealed;
-    if (revealLoading || already || !signedIn) return;
+    if (revealLoading || already || !signedIn || signedInRole !== who) return;
     setRevealLoading(who);
 
     try {
@@ -123,10 +151,13 @@ export default function Home() {
       const json = await res.json();
 
       if (res.ok && json?.ok) {
-        setRevealState({
+        const newState = {
           dadRevealed: Boolean(json.dadRevealed),
           momRevealed: Boolean(json.momRevealed),
-        });
+        };
+        setRevealState(newState);
+        // Emit real-time event to other connected devices via Socket.io
+        emitRevealUpdate(newState);
       } else {
         if (res.status === 401) {
           setSignedIn(false);
@@ -143,7 +174,7 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <header className="home-header">
+      <header ref={headerRef} className="home-header">
         <div className="home-header-content">
           <div className="home-header-title">𝒱𝒾𝒿𝒶𝓎 ♥ 𝒞𝓎𝓃𝓉𝒽𝒾𝒶</div>
           <button
@@ -155,21 +186,21 @@ export default function Home() {
             {menuOpen ? <FiX /> : <FiMenu />}
           </button>
           <nav className={`home-header-nav ${menuOpen ? "open" : ""}`}>
-            <a className="home-nav-link active" href="#">
+            <a className="home-nav-link active" href="#" onClick={() => setMenuOpen(false)}>
               Home
             </a>
-            <a className="home-nav-link" href="#our-journey">
+            <a className="home-nav-link" href="/our-story" onClick={() => setMenuOpen(false)}>
               Our Story
             </a>
-            <a className="home-nav-link" href="#vote">
+            <a className="home-nav-link" href="#vote" onClick={() => setMenuOpen(false)}>
               Vote Now
             </a>
             {signedIn ? (
-              <button className="home-signin-btn" onClick={handleSignOut}>
+              <button className="home-signin-btn" onClick={() => { handleSignOut(); setMenuOpen(false); }}>
                 Sign Out
               </button>
             ) : (
-              <button className="home-signin-btn" onClick={() => setSignInOpen(true)}>
+              <button className="home-signin-btn" onClick={() => { setSignInOpen(true); setMenuOpen(false); }}>
                 Sign In
               </button>
             )}
@@ -197,16 +228,19 @@ export default function Home() {
 
             <div className="home-hero-countdown">
               <Countdown
-                targetIso="2026-06-13T17:16:00"
+                // targetIso="2026-06-21T16:00:00"
+                targetIso="2026-06-13T16:00:00"
                 revealState={revealState}
                 signedIn={signedIn}
+                userRole={signedInRole}
+                revealGender={revealGender ?? undefined}
                 onReveal={handleReveal}
               />
             </div>
 
             <div className="home-hero-cta">
               <a href="#vote" className="home-hero-btn">Guess the Gift</a>
-              <a className="home-hero-link" href="#our-journey">
+              <a className="home-hero-link" href="/our-story">
                 <span>Our Journey</span>
                 <FiArrowRight />
               </a>
@@ -320,7 +354,7 @@ export default function Home() {
                   Our journey toward parenthood has been paved with faith. Each step of the way, we have felt the divine hand of God guiding us toward this beautiful moment.
                 </p>
               </div>
-              <button className="home-journey-btn">
+              <button className="home-journey-btn" onClick={() => window.location.href = '/our-story'}>
                 View Full Story
               </button>
             </div>

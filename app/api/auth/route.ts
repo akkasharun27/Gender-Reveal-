@@ -41,7 +41,7 @@ export async function GET() {
     if (typeof client.connect === 'function') await client.connect();
 
     const res = await client.query(
-      `SELECT u.id, u.name FROM users u
+      `SELECT u.id, u.name, u.user_role FROM users u
        INNER JOIN sessions s ON u.id = s.user_id
        WHERE s.token = $1 AND s.expires_at > now()`,
       [sessionToken]
@@ -51,7 +51,7 @@ export async function GET() {
     if (typeof client.end === 'function') await client.end();
     if (!row) return NextResponse.json({ ok: true, signedIn: false });
 
-    return NextResponse.json({ ok: true, signedIn: true, name: row.name });
+    return NextResponse.json({ ok: true, signedIn: true, name: row.name, role: row.user_role ?? 'guest' });
   } catch (err) {
     console.error('Auth status error', err);
     return NextResponse.json({ ok: false, error: 'DB error' }, { status: 500 });
@@ -73,13 +73,14 @@ export async function POST(req: Request) {
     if (typeof client.connect === 'function') await client.connect();
 
     // Verify credentials
-    const result = await client.query('SELECT id FROM users WHERE name = $1 AND password = $2 LIMIT 1', [name, password]);
+    const result = await client.query('SELECT id, user_role FROM users WHERE name = $1 AND password = $2 LIMIT 1', [name, password]);
     if (result?.rows?.length === 0) {
       if (typeof client.end === 'function') await client.end();
       return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
     const userId = result.rows[0].id;
+    const role = result.rows[0].user_role ?? 'guest';
     const token = generateToken();
 
     // Create session
@@ -90,7 +91,7 @@ export async function POST(req: Request) {
 
     if (typeof client.end === 'function') await client.end();
 
-    const response = NextResponse.json({ ok: true, signedIn: true, name });
+    const response = NextResponse.json({ ok: true, signedIn: true, name, role });
     const cookieStore = await cookies();
     cookieStore.set('session_token', token, {
       httpOnly: true,
