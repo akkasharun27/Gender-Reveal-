@@ -14,6 +14,7 @@ type RevealState = {
 };
 
 export default function Home() {
+  const [showStory, setShowStory ] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [voteOpen, setVoteOpen] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
@@ -234,8 +235,8 @@ export default function Home() {
 
             <div className="home-hero-countdown">
               <Countdown
-                // targetIso="2026-06-21T16:00:00"
-                targetIso="2026-06-13T16:00:00"
+                targetIso="2026-06-21T13:30:00"
+                // targetIso="2026-06-13T16:00:00"
                 revealState={revealState}
                 signedIn={signedIn}
                 userRole={signedInRole}
@@ -263,125 +264,126 @@ export default function Home() {
             <div className="diamond-icon"></div>
           </div>
         </div>
-
-        <section className="home-vote" id="vote">
-          <div className="home-vote-grid">
-            <div className="home-vote-card">
-              <div className="home-vote-card-overlay"></div>
-              <div className="home-vote-card-image">
-                <img alt="Blue baby accessories" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQl4T85w6skgNiWdES5o-wxCvWv4VTHhM2RV2WYtgjdW523IHoeV6cRdcWoaaTabZ0WshkG_-OSLZcbnC_xb4CSGYZToSkF50KyVDXWbmFhPiSVHEovtMnVxNuWW3j9UDIKnMpMjFx_U5845NZ5_7tFGosBRWAoxFNlmbvYtqxaz_ihXD_0ddGg3e1NeG8r8YiaOGUtZP0ASAXBjFoGRwh3RSCbLzYSaZaGB8SObQdR4OhpZ5ukuHPtFK8nIgMqpjaJH6ZkMp4Dnk" />
+        {showStory && (
+          <section className="home-vote" id="vote">
+            <div className="home-vote-grid">
+              <div className="home-vote-card">
+                <div className="home-vote-card-overlay"></div>
+                <div className="home-vote-card-image">
+                  <img alt="Blue baby accessories" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQl4T85w6skgNiWdES5o-wxCvWv4VTHhM2RV2WYtgjdW523IHoeV6cRdcWoaaTabZ0WshkG_-OSLZcbnC_xb4CSGYZToSkF50KyVDXWbmFhPiSVHEovtMnVxNuWW3j9UDIKnMpMjFx_U5845NZ5_7tFGosBRWAoxFNlmbvYtqxaz_ihXD_0ddGg3e1NeG8r8YiaOGUtZP0ASAXBjFoGRwh3RSCbLzYSaZaGB8SObQdR4OhpZ5ukuHPtFK8nIgMqpjaJH6ZkMp4Dnk" />
+                </div>
+                <div className="home-vote-card-content boy">
+                  <h3 className="home-vote-card-title" style={{ color: 'var(--color-tertiary)' }}>A Brave Little Prince</h3>
+                  <p className="home-vote-card-text">&quot;Be strong and courageous... for the Lord your God will be with you.&quot;</p>
+                  <button className="home-vote-card-btn" onClick={() => { setVoteGender("boy"); setVoteOpen(true); }}>
+                    Vote Boy
+                  </button>
+                </div>
               </div>
-              <div className="home-vote-card-content boy">
-                <h3 className="home-vote-card-title" style={{ color: 'var(--color-tertiary)' }}>A Brave Little Prince</h3>
-                <p className="home-vote-card-text">&quot;Be strong and courageous... for the Lord your God will be with you.&quot;</p>
-                <button className="home-vote-card-btn" onClick={() => { setVoteGender("boy"); setVoteOpen(true); }}>
-                  Vote Boy
-                </button>
+
+              <div className="home-vote-center">
+                <div className="home-vote-icon">
+                  <FiHeart />
+                </div>
+                <h2 className="home-vote-center-title">Join the Celebration</h2>
+                <p className="home-vote-center-text">
+                  Every child is a heritage from the Lord. Cast your prayerful vote on who you believe our little one will be.
+                </p>
+              </div>
+
+              <div className="home-vote-card home-vote-princess">
+                <div className="home-vote-card-overlay"></div>
+                <div className="home-vote-card-image">
+                  <img alt="Pink baby floral detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiRTmRaskF22cq766QTuisVS-3bcU8_4IuV1KSjE42nZjxmMQkw9k9-HLMLWEye53m9b0pe2Aawz-2Xe__F2uu98PK4ZmC_xtNURJAMvua72RUDKeXj1bil3dGbXYmaYXPakHiMPDj19Lvg_dq9sQhLsacGi8UiTrQz2qxlsG8ovzSiQITGEj20kyePaYisEq-vs4aIKJOXd1ItIbCQ_tlccwYPzrwph7iAdfm-yWqsnqooLE6ckNTA8xUU5ZHh53Z56iJzAJsTsg" />
+                </div>
+                <div className="home-vote-card-content girl">
+                  <h3 className="home-vote-card-title" style={{ color: '#ad1457' }}>A Radiant Little Princess</h3>
+                  <p className="home-vote-card-text">&quot;She is clothed in strength and dignity, and she laughs without fear of the future.&quot;</p>
+                  <button className="home-vote-card-btn" style={{ 
+                    backgroundColor: 'rgba(173, 20, 87, 0.1)',
+                    color: '#ad1457',
+                    borderColor: 'rgba(173, 20, 87, 0.3)'
+                  }} onClick={() => { setVoteGender("girl"); setVoteOpen(true); }}>
+                    Vote Girl
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+        {showStory && (
+          <section className="guess-section">
+            <div className="guess-section__header">
+              <h3 className="guess-section__title">Total Wishes Cast</h3>
+              <p className="guess-section__subtitle">Total Votes: {totalWishes}</p>
+            </div>
+
+            {/* <div className="guess-section__votes">
+              <div className="vote-card">
+                <div className="vote-card__top">
+                  <span className="vote-card__label">Prince of Peace</span>
+                  <span className="vote-card__percent vote-card__percent--boy" id="boy-percent">48%</span>
+                </div>
+
+                <div className="vote-card__track">
+                  <div className="vote-card__progress vote-card__progress--boy" id="boy-bar"></div>
+                </div>
+              </div>
+
+              <div className="vote-card">
+                <div className="vote-card__top">
+                  <span className="vote-card__label">Daughter of the King</span>
+                  <span className="vote-card__percent vote-card__percent--girl" id="girl-percent">52%</span>
+                </div>
+
+                <div className="vote-card__track">
+                  <div className="vote-card__progress vote-card__progress--girl" id="girl-bar"></div>
+                </div>
+              </div>
+
+            </div> */}
+            <div className="guess-section__votes">
+              <div className="vote-card">
+                <div className="vote-card__top">
+                  <span className="vote-card__label">Prince of Peace</span>
+                  <span className="vote-card__percent vote-card__percent--boy">
+                    {boyPercentage}%
+                  </span>
+                </div>
+
+                <div className="vote-card__track">
+                  <div
+                    className="vote-card__progress vote-card__progress--boy"
+                    style={{ width: `${boyPercentage}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="vote-card">
+                <div className="vote-card__top">
+                  <span className="vote-card__label">Daughter of the King</span>
+                  <span className="vote-card__percent vote-card__percent--girl">
+                    {girlPercentage}%
+                  </span>
+                </div>
+
+                <div className="vote-card__track">
+                  <div
+                    className="vote-card__progress vote-card__progress--girl"
+                    style={{ width: `${girlPercentage}%` }}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="home-vote-center">
-              <div className="home-vote-icon">
-                <FiHeart />
-              </div>
-              <h2 className="home-vote-center-title">Join the Celebration</h2>
-              <p className="home-vote-center-text">
-                Every child is a heritage from the Lord. Cast your prayerful vote on who you believe our little one will be.
+            <div className="guess-section__message">
+              <p className="guess-section__verse">
+                "Every good and perfect gift is from above, coming down from the Father of the heavenly lights."
               </p>
+              <span className="guess-section__reference">— James 1:17</span>
             </div>
-
-            <div className="home-vote-card home-vote-princess">
-              <div className="home-vote-card-overlay"></div>
-              <div className="home-vote-card-image">
-                <img alt="Pink baby floral detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiRTmRaskF22cq766QTuisVS-3bcU8_4IuV1KSjE42nZjxmMQkw9k9-HLMLWEye53m9b0pe2Aawz-2Xe__F2uu98PK4ZmC_xtNURJAMvua72RUDKeXj1bil3dGbXYmaYXPakHiMPDj19Lvg_dq9sQhLsacGi8UiTrQz2qxlsG8ovzSiQITGEj20kyePaYisEq-vs4aIKJOXd1ItIbCQ_tlccwYPzrwph7iAdfm-yWqsnqooLE6ckNTA8xUU5ZHh53Z56iJzAJsTsg" />
-              </div>
-              <div className="home-vote-card-content girl">
-                <h3 className="home-vote-card-title" style={{ color: '#ad1457' }}>A Radiant Little Princess</h3>
-                <p className="home-vote-card-text">&quot;She is clothed in strength and dignity, and she laughs without fear of the future.&quot;</p>
-                <button className="home-vote-card-btn" style={{ 
-                  backgroundColor: 'rgba(173, 20, 87, 0.1)',
-                  color: '#ad1457',
-                  borderColor: 'rgba(173, 20, 87, 0.3)'
-                }} onClick={() => { setVoteGender("girl"); setVoteOpen(true); }}>
-                  Vote Girl
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="guess-section">
-          <div className="guess-section__header">
-            <h3 className="guess-section__title">Total Wishes Cast</h3>
-            <p className="guess-section__subtitle">Total Votes: {totalWishes}</p>
-          </div>
-
-          {/* <div className="guess-section__votes">
-            <div className="vote-card">
-              <div className="vote-card__top">
-                <span className="vote-card__label">Prince of Peace</span>
-                <span className="vote-card__percent vote-card__percent--boy" id="boy-percent">48%</span>
-              </div>
-
-              <div className="vote-card__track">
-                <div className="vote-card__progress vote-card__progress--boy" id="boy-bar"></div>
-              </div>
-            </div>
-
-            <div className="vote-card">
-              <div className="vote-card__top">
-                <span className="vote-card__label">Daughter of the King</span>
-                <span className="vote-card__percent vote-card__percent--girl" id="girl-percent">52%</span>
-              </div>
-
-              <div className="vote-card__track">
-                <div className="vote-card__progress vote-card__progress--girl" id="girl-bar"></div>
-              </div>
-            </div>
-
-          </div> */}
-          <div className="guess-section__votes">
-            <div className="vote-card">
-              <div className="vote-card__top">
-                <span className="vote-card__label">Prince of Peace</span>
-                <span className="vote-card__percent vote-card__percent--boy">
-                  {boyPercentage}%
-                </span>
-              </div>
-
-              <div className="vote-card__track">
-                <div
-                  className="vote-card__progress vote-card__progress--boy"
-                  style={{ width: `${boyPercentage}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="vote-card">
-              <div className="vote-card__top">
-                <span className="vote-card__label">Daughter of the King</span>
-                <span className="vote-card__percent vote-card__percent--girl">
-                  {girlPercentage}%
-                </span>
-              </div>
-
-              <div className="vote-card__track">
-                <div
-                  className="vote-card__progress vote-card__progress--girl"
-                  style={{ width: `${girlPercentage}%` }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="guess-section__message">
-            <p className="guess-section__verse">
-              "Every good and perfect gift is from above, coming down from the Father of the heavenly lights."
-            </p>
-            <span className="guess-section__reference">— James 1:17</span>
-          </div>
-        </section>
-
+          </section>
+        )}
         <VoteModal
           open={voteOpen}
           defaultGender={voteGender}
@@ -417,43 +419,44 @@ export default function Home() {
             }
           }}
         />
-
-        <section className="home-journey" id="our-journey">
-          <div className="home-journey-container">
-            <div className="home-journey-header">
-              <div className="home-journey-intro">
-                <span className="home-journey-label">The Beginning</span>
-                <h2 className="home-journey-title">The Gift of Expectation</h2>
-                <p className="home-journey-text">
-                  Our journey toward parenthood has been paved with faith. Each step of the way, we have felt the divine hand of God guiding us toward this beautiful moment.
-                </p>
+        {showStory && (
+          <section className="home-journey" id="our-journey">
+            <div className="home-journey-container">
+              <div className="home-journey-header">
+                <div className="home-journey-intro">
+                  <span className="home-journey-label">The Beginning</span>
+                  <h2 className="home-journey-title">The Gift of Expectation</h2>
+                  <p className="home-journey-text">
+                    Our journey toward parenthood has been paved with faith. Each step of the way, we have felt the divine hand of God guiding us toward this beautiful moment.
+                  </p>
+                </div>
+                <button className="home-journey-btn" onClick={() => window.location.href = '/our-story'}>
+                  View Full Story
+                </button>
               </div>
-              <button className="home-journey-btn" onClick={() => window.location.href = '/our-story'}>
-                View Full Story
-              </button>
+              <div className="home-journey-grid">
+                <div className="home-journey-image">
+                  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkeVvEZBYeFfj54jdN0XIH59es9E8zhVOzcKCJJX_F_8E41JYOthKIk3aqPouJ7OaPD_dJ0P8JbkKmiCtP0B78vQtdSaZzWMo8t9nebzHvpQbRw_8ZosBYaQ-tf49NlvnQQYv1xPMKWniMjUOgc5lZuIvq1ypBfT5D5W40SjxFe8OmkpP3TSAI26UuUQYFZIVhkZuMYqxQW0nhACx9o6CYBErcW_A5adwZ6qLQAHqL274xEGYguTxR30qD8_su5q5bxYWC7Rnm7p4" alt="Pregnant woman cradling belly" />
+                  <div className="home-journey-image-overlay">
+                    <AiFillHeart />
+                  </div>
+                </div>
+                <div className="home-journey-image">
+                  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZGCGQRX6RsYNfw-IQ-pzTEbjy6QgZO_7mvdT-ArgsM687QXLuSdfACy8qV6-HALgVJylA8Ac-v4kZiQtwXpb5oxps1NnKwdQzhNLsenGTMEypLSV10QTr0jQMlhAWdX0R5KheSKxVVT7HJ8HZKNPaQnesoLiGzMgmfMEqqiXIeMjyRKm3fZdmIIWqwQyqm5ESDLlwmSFgwT0xlZaLwai0RM5Tw7baQbpeijQJluBLlYv5pL85cuAE9gi8qt3SnghFf_qgLkYYqSI" alt="Couple praying at sunset" />
+                  <div className="home-journey-image-overlay">
+                    <AiFillHeart />
+                  </div>
+                </div>
+                <div className="home-journey-image">
+                  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTTdJnUvoN6sp-c-OGKVhutXTvphK-w0XOkOjZfC03P4wKgtsXbfG4FmnLLmfSKUO3O2viC5ssnUSIH-MDHpq46zEUVvdxlQ5KiY6h2JztQTYf9a2BAJW2IM40ckCzUgAqAo_ga03sI2OyJN_CjAZ_F_nu1BvnHxNr3w7KiQ-jLuFulNICgM215tA4iTGAvE-mxDwbZ9CALofnxtTznMfvph32-oKO-Uc3AU2z5cStp5XoNe1_Wf-wpOieyiWvHvEKhGn-AGgiYwg" alt="Open Bible with olive branch" />
+                  <div className="home-journey-image-overlay">
+                    <FiBook />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="home-journey-grid">
-              <div className="home-journey-image">
-                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkeVvEZBYeFfj54jdN0XIH59es9E8zhVOzcKCJJX_F_8E41JYOthKIk3aqPouJ7OaPD_dJ0P8JbkKmiCtP0B78vQtdSaZzWMo8t9nebzHvpQbRw_8ZosBYaQ-tf49NlvnQQYv1xPMKWniMjUOgc5lZuIvq1ypBfT5D5W40SjxFe8OmkpP3TSAI26UuUQYFZIVhkZuMYqxQW0nhACx9o6CYBErcW_A5adwZ6qLQAHqL274xEGYguTxR30qD8_su5q5bxYWC7Rnm7p4" alt="Pregnant woman cradling belly" />
-                <div className="home-journey-image-overlay">
-                  <AiFillHeart />
-                </div>
-              </div>
-              <div className="home-journey-image">
-                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZGCGQRX6RsYNfw-IQ-pzTEbjy6QgZO_7mvdT-ArgsM687QXLuSdfACy8qV6-HALgVJylA8Ac-v4kZiQtwXpb5oxps1NnKwdQzhNLsenGTMEypLSV10QTr0jQMlhAWdX0R5KheSKxVVT7HJ8HZKNPaQnesoLiGzMgmfMEqqiXIeMjyRKm3fZdmIIWqwQyqm5ESDLlwmSFgwT0xlZaLwai0RM5Tw7baQbpeijQJluBLlYv5pL85cuAE9gi8qt3SnghFf_qgLkYYqSI" alt="Couple praying at sunset" />
-                <div className="home-journey-image-overlay">
-                  <AiFillHeart />
-                </div>
-              </div>
-              <div className="home-journey-image">
-                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTTdJnUvoN6sp-c-OGKVhutXTvphK-w0XOkOjZfC03P4wKgtsXbfG4FmnLLmfSKUO3O2viC5ssnUSIH-MDHpq46zEUVvdxlQ5KiY6h2JztQTYf9a2BAJW2IM40ckCzUgAqAo_ga03sI2OyJN_CjAZ_F_nu1BvnHxNr3w7KiQ-jLuFulNICgM215tA4iTGAvE-mxDwbZ9CALofnxtTznMfvph32-oKO-Uc3AU2z5cStp5XoNe1_Wf-wpOieyiWvHvEKhGn-AGgiYwg" alt="Open Bible with olive branch" />
-                <div className="home-journey-image-overlay">
-                  <FiBook />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         <SignInModal
           open={signInOpen}
