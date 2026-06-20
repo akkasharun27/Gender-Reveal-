@@ -73,22 +73,61 @@
   z-index: 60;
 }
 
-@media (min-width: 768px) {
-  .home-mobile-toggle {
-    display: none;
+@media (prefers-color-scheme: dark) {
+  .home-container {
+    color: var(--color-on-surface);
+    background-color: antiquewhite;
   }
 
-  .home-header-nav {
-    display: flex;
-    position: static;
-    flex-direction: row;
-    background: transparent;
-    padding: 0;
-    box-shadow: none;
+  .home-hero-title {
+    color: #f8fafc !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
   }
 
-  .home-header-nav.open {
-    display: flex;
+  .home-hero-label {
+    color: #c9d9ff !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .home-hero-subtitle {
+    color: rgba(255, 255, 255, 0.88) !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .home-vote-card-content.boy {
+    background-color: rgba(30, 80, 160, 0.75) !important;
+    opacity: 1 !important;
+  }
+
+  .home-vote-card-content.girl {
+    background-color: rgba(160, 30, 80, 0.75) !important;
+    opacity: 1 !important;
+  }
+
+  .home-vote-card-title {
+    color: #ffffff !important;
+  }
+
+  .home-vote-card-text {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  .home-header-title {
+    color: var(--color-primary);
+  }
+
+  .guess-section {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .guess-section__title,
+  .vote-card__label {
+    color: #222 !important;
+  }
+
+  .guess-section__verse,
+  .guess-section__reference {
+    color: #555 !important;
   }
 }
 
@@ -1217,7 +1256,7 @@
   }
 
   .home-container {
-    color: var(--color-on-surface);
+    color: black;
     background-color: antiquewhite;
   }
 
