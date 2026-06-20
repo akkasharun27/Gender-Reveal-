@@ -195,52 +195,7 @@
   border: 2px dashed #d4af37;
   border-radius: 16px;
 }
-@media (prefers-color-scheme: dark) {
 
-  /* Story page hero text */
-  .hero-story-topline {
-    color: #c4a96a;
-  }
-
-  .hero-story-title {
-    color: #c4a96a;
-  }
-
-  .hero-story-subtitle {
-    color: rgba(220, 210, 195, 0.9);
-  }
-
-  /* Chapter content */
-  .chapter__title {
-    color: #f0ece4; /* was hardcoded #1a1a1a — black on dark = invisible */
-  }
-
-  .chapter__description {
-    color: rgba(220, 210, 195, 0.85); /* was #666 — too dark */
-  }
-
-  .chapter__label {
-    color: #d4af37; /* gold stays readable, slight brighten */
-  }
-
-  /* Cards */
-  .chapter__card {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  /* Timeline line already has low opacity so it's fine */
-
-  /* Marker border — white border on dark bg disappears */
-  .chapter__marker {
-    border-color: #1a1a1a;
-  }
-
-  /* Coming soon box */
-  .section__coming-soon {
-    color: rgba(240, 236, 228, 0.8);
-  }
-}
 
 /* Responsive */
 @media (max-width: 768px) {

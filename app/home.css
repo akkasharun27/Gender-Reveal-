@@ -73,64 +73,6 @@
   z-index: 60;
 }
 
-@media (prefers-color-scheme: dark) {
-  .home-container {
-    color: var(--color-on-surface);
-    background-color: antiquewhite;
-  }
-
-  .home-hero-title {
-    color: #f8fafc !important;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-  }
-
-  .home-hero-label {
-    color: #c9d9ff !important;
-    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
-  }
-
-  .home-hero-subtitle {
-    color: rgba(255, 255, 255, 0.88) !important;
-    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
-  }
-
-  .home-vote-card-content.boy {
-    background-color: rgba(30, 80, 160, 0.75) !important;
-    opacity: 1 !important;
-  }
-
-  .home-vote-card-content.girl {
-    background-color: rgba(160, 30, 80, 0.75) !important;
-    opacity: 1 !important;
-  }
-
-  .home-vote-card-title {
-    color: #ffffff !important;
-  }
-
-  .home-vote-card-text {
-    color: rgba(255, 255, 255, 0.85) !important;
-  }
-
-  .home-header-title {
-    color: var(--color-primary);
-  }
-
-  .guess-section {
-    background: rgba(255, 255, 255, 0.92);
-  }
-
-  .guess-section__title,
-  .vote-card__label {
-    color: #222 !important;
-  }
-
-  .guess-section__verse,
-  .guess-section__reference {
-    color: #555 !important;
-  }
-}
-
 .home-nav-link {
   font-size: var(--label-md);
   text-decoration: none;
@@ -549,6 +491,22 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(var(--color-on-surface), 0.75);
+}
+@media (min-width: 768px) {
+  .home-mobile-toggle {
+    display: none;
+  }
+  .home-header-nav {
+    display: flex;
+    position: static;
+    flex-direction: row;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+   .home-header-nav.open {
+    display: flex;
+   }
 }
 
 @media (max-width: 767px) {
@@ -1251,9 +1209,6 @@
 .vote-modal-submit { padding:12px 24px; background:var(--color-primary); color:var(--color-on-primary); border:none; border-radius:8px; cursor:pointer; }
 
 @media (prefers-color-scheme: dark) {
-  body {
-    /* background: linear-gradient(rgba(7,7,12,0.92), rgba(7,7,12,0.92)), url("/bible-bg.png") center/cover no-repeat; */
-  }
 
   .home-container {
     color: black;
@@ -1261,127 +1216,8 @@
   }
 
   .home-header {
-    background-color: rgba(8, 10, 18, 0.9);
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-  }
-
-  .home-mobile-toggle {
-    background: rgba(20, 24, 38, 0.96);
-    border-color: rgba(255, 255, 255, 0.16);
-    color: var(--color-on-surface);
-  }
-
-  .home-header-nav.open {
-    background: rgba(10, 12, 20, 0.98);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-  }
-
-  .home-nav-link:not(.active) {
-    color: rgba(248, 250, 252, 0.82);
-  }
-
-  .home-nav-link:not(.active):hover {
-    background-color: rgba(139, 92, 246, 0.12);
-  }
-
-  .home-signin-btn,
-  .home-hero-btn,
-  .vote-modal-submit,
-  .signin-modal-submit {
-    background: var(--color-primary);
-    color: var(--color-on-primary);
-  }
-
-  .signin-modal,
-  .vote-modal {
-    background: rgba(10, 12, 20, 0.98);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-    color: var(--color-on-surface);
-  }
-
-  .signin-modal-close,
-  .vote-modal-close {
-    color: var(--color-on-surface);
-  }
-
-  .signin-modal-title,
-  .signin-label,
-  .vote-modal-title {
-    color: var(--color-on-surface);
-  }
-
-  .signin-input,
-  .vote-input,
-  .vote-textarea {
-    border-color: rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--color-on-surface);
-  }
-
-  .signin-error {
-    color: #fca5a5;
-  }
-
-  .home-vote-card {
-    background-color: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-    color: var(--color-on-surface);
-  }
-
-  .home-vote-card-content.boy {
-    background-color: rgba(49, 130, 206, 0.12);
-  }
-
-  .home-vote-card-content.girl {
-    background-color: rgba(236, 72, 153, 0.12);
-  }
-
-  .home-vote-card-text,
-  .home-vote-card-btn,
-  .home-vote-center-text,
-  .home-vote-center-title,
-  .home-hero-subtitle,
-  .home-hero-label,
-  .home-hero-title {
-    color: var(--color-on-surface);
-  }
-
-  .home-hero-overlay {
-    background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
-    opacity: 0.24;
-    mix-blend-mode: overlay;
-  }
-
-  .countdown-reveal-button {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--color-on-surface);
-  }
-
-  .countdown-reveal-button:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.14);
-  }
-
-  .countdown-reveal-button.revealed {
-    background: rgba(102, 255, 195, 0.18);
-    color: #e2f7ef;
-  }
-
-  .home-hero-title {
-    color: #f8fafc;
-  }
-
-  .home-hero-subtitle {
-    color: rgba(248, 250, 252, 0.78);
-  }
-
-  .home-hero-countdown {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .home-vote-princess .home-vote-card-btn {
-    background-color: rgba(173, 20, 87, 0.15);
-    color: #fde2e8;
+    background-color: var(--color-on-surface);
+    border-bottom-color: var(--color-on-surface);
   }
 }
 
