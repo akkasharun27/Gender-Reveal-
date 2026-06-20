@@ -23,6 +23,8 @@ export default function Home() {
   const [signInError, setSignInError] = useState("");
   const [voteGender, setVoteGender] = useState<"boy" | "girl">("boy");
   const [totalWishes, setTotalWishes] = useState(1);
+  const [boyPercentage, setBoyPercentage] = useState(0);
+  const [girlPercentage, setGirlPercentage] = useState(0);
   const [revealGender, setRevealGender] = useState<'boy' | 'girl' | null>(null);
   const [revealState, setRevealState] = useState<RevealState>({ dadRevealed: false, momRevealed: false });
   const [revealLoading, setRevealLoading] = useState<'dad' | 'mom' | null>(null);
@@ -52,10 +54,14 @@ export default function Home() {
         const res = await fetch('/api/wishes');
         const json = await res.json();
         if (mounted && res.ok && json?.ok) {
+          const totalVotes = json.total ?? 1;
+          const boyVotes = json.counts?.boy ?? 0;
+          const girlVotes = json.counts?.girl ?? 0;
+          const boyPercentage = (boyVotes / totalVotes) * 100;
+          const girlPercentage = (girlVotes / totalVotes) * 100;
           if (typeof json.total === 'number') setTotalWishes(json.total);
-          if (json.leadingGender === 'boy' || json.leadingGender === 'girl') {
-            setRevealGender(json.leadingGender);
-          }
+          setBoyPercentage(boyPercentage);
+          setGirlPercentage(girlPercentage);
         }
       } catch (e) {
         console.error('Failed to fetch total wishes', e);
@@ -282,10 +288,6 @@ export default function Home() {
               <p className="home-vote-center-text">
                 Every child is a heritage from the Lord. Cast your prayerful vote on who you believe our little one will be.
               </p>
-              <div className="home-vote-stats">
-                <div className="home-vote-stats-label">Total Wishes Cast</div>
-                <div className="home-vote-stats-number">{totalWishes}</div>
-              </div>
             </div>
 
             <div className="home-vote-card home-vote-princess">
@@ -305,6 +307,78 @@ export default function Home() {
                 </button>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="guess-section">
+          <div className="guess-section__header">
+            <h3 className="guess-section__title">Total Wishes Cast</h3>
+            <p className="guess-section__subtitle">Total Votes: {totalWishes}</p>
+          </div>
+
+          {/* <div className="guess-section__votes">
+            <div className="vote-card">
+              <div className="vote-card__top">
+                <span className="vote-card__label">Prince of Peace</span>
+                <span className="vote-card__percent vote-card__percent--boy" id="boy-percent">48%</span>
+              </div>
+
+              <div className="vote-card__track">
+                <div className="vote-card__progress vote-card__progress--boy" id="boy-bar"></div>
+              </div>
+            </div>
+
+            <div className="vote-card">
+              <div className="vote-card__top">
+                <span className="vote-card__label">Daughter of the King</span>
+                <span className="vote-card__percent vote-card__percent--girl" id="girl-percent">52%</span>
+              </div>
+
+              <div className="vote-card__track">
+                <div className="vote-card__progress vote-card__progress--girl" id="girl-bar"></div>
+              </div>
+            </div>
+
+          </div> */}
+          <div className="guess-section__votes">
+            <div className="vote-card">
+              <div className="vote-card__top">
+                <span className="vote-card__label">Prince of Peace</span>
+                <span className="vote-card__percent vote-card__percent--boy">
+                  {boyPercentage}%
+                </span>
+              </div>
+
+              <div className="vote-card__track">
+                <div
+                  className="vote-card__progress vote-card__progress--boy"
+                  style={{ width: `${boyPercentage}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="vote-card">
+              <div className="vote-card__top">
+                <span className="vote-card__label">Daughter of the King</span>
+                <span className="vote-card__percent vote-card__percent--girl">
+                  {girlPercentage}%
+                </span>
+              </div>
+
+              <div className="vote-card__track">
+                <div
+                  className="vote-card__progress vote-card__progress--girl"
+                  style={{ width: `${girlPercentage}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="guess-section__message">
+            <p className="guess-section__verse">
+              "Every good and perfect gift is from above, coming down from the Father of the heavenly lights."
+            </p>
+            <span className="guess-section__reference">— James 1:17</span>
           </div>
         </section>
 

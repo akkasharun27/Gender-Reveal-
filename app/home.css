@@ -4,7 +4,7 @@
 .home-container {
   position: relative;
   min-height: 100vh;
-  background-color: transparent;
+  background-color: antiquewhite;
   font-family: var(--font-body);
   color: var(--color-on-surface);
   overflow-x: hidden;
@@ -1213,11 +1213,12 @@
 
 @media (prefers-color-scheme: dark) {
   body {
-    background: linear-gradient(rgba(7,7,12,0.92), rgba(7,7,12,0.92)), url("/bible-bg.png") center/cover no-repeat;
+    /* background: linear-gradient(rgba(7,7,12,0.92), rgba(7,7,12,0.92)), url("/bible-bg.png") center/cover no-repeat; */
   }
 
   .home-container {
     color: var(--color-on-surface);
+    background-color: antiquewhite;
   }
 
   .home-header {
@@ -1352,4 +1353,121 @@
   50% {
     transform: translateX(-50%) translateY(-8px);
   }
+}
+
+.guess-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+  background: #faf8f5;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.guess-section__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.guess-section__title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.guess-section__subtitle {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #777;
+}
+
+/* Vote container */
+.guess-section__votes {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Vote card */
+.vote-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vote-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.vote-card__label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+}
+
+.vote-card__percent {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.vote-card__percent--boy {
+  color: #8a6d3b;
+}
+
+.vote-card__percent--girl {
+  color: #d16b7c;
+}
+
+/* Progress Bar */
+.vote-card__track {
+  width: 100%;
+  height: 16px;
+  background: #e8e5df;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.vote-card__progress {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s ease;
+}
+
+.vote-card__progress--boy {
+  width: 48%;
+  background: #8a6d3b;
+}
+
+.vote-card__progress--girl {
+  width: 52%;
+  background: #d16b7c;
+}
+
+/* Message box */
+.guess-section__message {
+  margin-top: 50px;
+  padding: 24px;
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.guess-section__verse {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #666;
+  font-style: italic;
+}
+
+.guess-section__reference {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #999;
 }

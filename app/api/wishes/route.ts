@@ -44,11 +44,10 @@ export async function GET() {
       if (r.gender === 'boy') boy = r.cnt ?? 0;
       if (r.gender === 'girl') girl = r.cnt ?? 0;
     }
-    const leadingGender = boy > girl ? 'boy' : 'girl';
 
     if (typeof client.end === 'function') await client.end();
 
-    return NextResponse.json({ ok: true, total, counts: { boy, girl }, leadingGender });
+    return NextResponse.json({ ok: true, total, counts: { boy, girl } });
   } catch (err) {
     console.error('DB count error', err);
     return NextResponse.json({ error: 'DB error' }, { status: 500 });
