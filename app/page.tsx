@@ -14,7 +14,7 @@ type RevealState = {
 };
 
 export default function Home() {
-  const [showStory, setShowStory ] = useState(false);
+  const [showStory, setShowStory ] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [voteOpen, setVoteOpen] = useState(false);
   const [signInOpen, setSignInOpen] = useState(false);
@@ -345,7 +345,7 @@ export default function Home() {
             <div className="guess-section__votes">
               <div className="vote-card">
                 <div className="vote-card__top">
-                  <span className="vote-card__label">Prince of Peace</span>
+                  <span className="vote-card__label">Prince of the King</span>
                   <span className="vote-card__percent vote-card__percent--boy">
                     {boyPercentage}%
                   </span>

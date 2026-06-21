@@ -72,7 +72,7 @@ export default function VoteModal({ open, defaultGender, onClose, onSubmit }: Pr
                 checked={gender === "boy"}
                 onChange={() => setGender("boy")}
               />
-              Prince of Peace
+              Prince of the king
             </label>
             <label className="vote-radio">
               <input
