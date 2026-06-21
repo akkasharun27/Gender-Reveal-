@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Countdown from "./components/Countdown";
 import VoteModal from "./components/VoteModal";
 import SignInModal from "./components/SignInModal";
-import { useRevealSync } from "./hooks/useRevealSync";
+// import { useRevealSync } from "./hooks/useRevealSync";
 import { FiChevronDown, FiHeart, FiArrowRight, FiBook, FiMenu, FiX } from "react-icons/fi";
 import { AiFillHeart } from "react-icons/ai";
 import "./home.css";
@@ -30,10 +30,10 @@ export default function Home() {
   const [revealState, setRevealState] = useState<RevealState>({ dadRevealed: false, momRevealed: false });
   const [revealLoading, setRevealLoading] = useState<'dad' | 'mom' | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
-  const { emitRevealUpdate } = useRevealSync(() => {
-    // Callback when reveal is updated from another device
-    window.location.reload();
-  });
+  // const { emitRevealUpdate } = useRevealSync(() => {
+  //   // Callback when reveal is updated from another device
+  //   window.location.reload();
+  // });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -163,8 +163,8 @@ export default function Home() {
           momRevealed: Boolean(json.momRevealed),
         };
         setRevealState(newState);
-        // Emit real-time event to other connected devices via Socket.io
-        emitRevealUpdate(newState);
+        // // Emit real-time event to other connected devices via Socket.io
+        // emitRevealUpdate(newState);
       } else {
         if (res.status === 401) {
           setSignedIn(false);
