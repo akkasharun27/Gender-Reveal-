@@ -232,6 +232,9 @@ export default function Home() {
                 Blessed and chosen, we wait to see who God has sent to us.
               </p>
             </div>
+            <h1 className="home-hero-title" style={{ color: 'pink'}}>
+              It's a GIRL..
+            </h1>
 
             <div className="home-hero-countdown">
               <Countdown
