@@ -10,6 +10,7 @@ import "./our-story.css";
 export default function OurStoryPage() {
 
   const [showStory, setShowStory ] = useState(true);
+  
   useEffect(() => {
 
   }, []);
