@@ -49,17 +49,33 @@ export default function Countdown({
     // Show the video element first (no preview before user clicks)
     setIsPlaying(true);
 
-    // Defer actual play & fullscreen until the element is mounted
     requestAnimationFrame(async () => {
       const overlay = overlayRef.current;
       const v = videoRef.current;
       if (!v) return;
+
+      const tryPlay = async (retry = 0) => {
+        try {
+          await v.play();
+        } catch (err) {
+          if (retry < 1) {
+            await new Promise((resolve) => window.setTimeout(resolve, 120));
+            await tryPlay(1);
+          }
+        }
+      };
+
+      try {
+        await tryPlay();
+      } catch (err) {
+        // ignore playback errors; the UI still shows the video
+      }
+
       try {
         if (overlay && typeof overlay.requestFullscreen === 'function') {
           // request fullscreen on the overlay so we can control layout
           // @ts-ignore
           await overlay.requestFullscreen();
-          // try to lock orientation to portrait when supported
           try {
             // @ts-ignore
             if (screen && screen.orientation && typeof screen.orientation.lock === 'function') {
@@ -79,12 +95,6 @@ export default function Countdown({
         }
       } catch (e) {
         // ignore fullscreen errors
-      }
-
-      try {
-        await v.play();
-      } catch (err) {
-        // ignore play errors
       }
     });
   };
@@ -149,8 +159,9 @@ export default function Countdown({
                   ref={videoRef}
                   src={pickRevealMedia(revealGender ?? 'girl')}
                   className="countdown-final-video"
-                  preload="metadata"
+                  preload="auto"
                   playsInline
+                  autoPlay
                   controls
                   muted={false}
                   style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 'auto', height: '100%', objectFit: 'contain' }}
