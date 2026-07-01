@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
 const fs = require('fs');
 const path = require('path');
+const { getDatabaseConnectionString } = require('../lib/db-config');
 
 function loadDotEnv() {
   if (process.env.DATABASE_URL) return;
@@ -30,7 +31,7 @@ try {
 }
 
 async function run() {
-  const conn = process.env.DATABASE_URL;
+  const conn = getDatabaseConnectionString(process.env.DATABASE_URL);
   if (!conn) {
     console.error('DATABASE_URL is not set. Add it to your environment or .env file.');
     process.exit(1);

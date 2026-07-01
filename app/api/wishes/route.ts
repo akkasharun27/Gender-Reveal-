@@ -1,14 +1,20 @@
 import { NextResponse } from "next/server";
+import dbConfig from "../../../lib/db-config";
+
+const { getDatabaseConnectionString } = dbConfig as {
+  getDatabaseConnectionString: (value?: string | null) => string | undefined;
+};
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function getClient() {
+  const connectionString = getDatabaseConnectionString(process.env.DATABASE_URL);
   try {
     const neon = await import('@neondatabase/serverless');
     if (typeof (neon as any).createClient === 'function') {
-      return (neon as any).createClient({ connectionString: process.env.DATABASE_URL });
+      return (neon as any).createClient({ connectionString });
     }
     if ((neon as any).default && typeof (neon as any).default.createClient === 'function') {
-      return (neon as any).default.createClient({ connectionString: process.env.DATABASE_URL });
+      return (neon as any).default.createClient({ connectionString });
     }
   } catch {
     // ignore
@@ -17,7 +23,7 @@ async function getClient() {
   // fallback to pg
   try {
     const { Client } = await import('pg');
-    return new Client({ connectionString: process.env.DATABASE_URL });
+    return new Client({ connectionString });
   } catch {
     throw new Error('No suitable DB client found. Install @neondatabase/serverless or pg.');
   }
